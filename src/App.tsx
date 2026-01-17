@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import SubmitProject from './pages/SubmitProject';
+import VotingPage from './pages/VotingPage';
+import ResultsPage from './pages/ResultsPage';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const location = useLocation();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+    <div className="app">
+      <header className="header">
+        <div className="header-content">
+          <div className="logo-section">
+            <h1 className="logo">Signal</h1>
+            <p className="tagline">Quadratic Voting on Monad</p>
+          </div>
+
+          <nav className="nav">
+            <Link
+              to="/"
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+            >
+              Vote
+            </Link>
+            <Link
+              to="/submit"
+              className={`nav-link ${location.pathname === '/submit' ? 'active' : ''}`}
+            >
+              Submit Project
+            </Link>
+            <Link
+              to="/results"
+              className={`nav-link ${location.pathname === '/results' ? 'active' : ''}`}
+            >
+              Results
+            </Link>
+          </nav>
+
+          <div className="wallet-section">
+            <ConnectButton />
+          </div>
+        </div>
+      </header>
+
+      <main className="main">
+        <Routes>
+          <Route path="/" element={<VotingPage />} />
+          <Route path="/submit" element={<SubmitProject />} />
+          <Route path="/results" element={<ResultsPage />} />
+        </Routes>
+      </main>
+
+      <footer className="footer">
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          Built for Monad Testnet • Optimized for Parallel Execution
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;

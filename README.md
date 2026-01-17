@@ -1,73 +1,148 @@
-# React + TypeScript + Vite
+# Signal - Quadratic Voting on Monad
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-throughput Quadratic Voting platform optimized for Monad testnet's parallel execution capabilities.
 
-Currently, two official plugins are available:
+## What is Quadratic Voting?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Quadratic Voting allows participants to express both preference and intensity of preference. The cost of votes increases quadratically:
 
-## React Compiler
+- **Formula**: `cost = votes²`
+- **Examples**: 1 vote = 1 credit, 2 votes = 4 credits, 3 votes = 9 credits, 10 votes = 100 credits
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This encourages spreading votes across multiple projects rather than concentrating on one.
 
-## Expanding the ESLint configuration
+## Why Monad?
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Monad's parallel execution model enables multiple voters to vote simultaneously without conflicts. Our contract is optimized for this:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Isolated voter state**: Each voter's data is in separate storage slots
+- **Minimal shared state**: Only vote aggregation creates conflicts, which Monad handles efficiently
+- **High throughput**: 100 voters can vote in parallel if voting for different projects
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Submit projects with rich metadata (name, description, links, team info)
+- Allocate votes across multiple projects with real-time cost calculation
+- Live leaderboard sorted by vote power
+- Privacy-preserving (no voter identities exposed)
+
+## Tech Stack
+
+- **Frontend**: Vite + React + TypeScript
+- **Wallet**: wagmi + viem + RainbowKit
+- **Contracts**: Solidity 0.8.24
+- **Blockchain**: Monad Testnet
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configure Environment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
 ```
+
+Edit `.env` and add:
+- `VITE_WALLETCONNECT_PROJECT_ID`: Get from [WalletConnect Cloud](https://cloud.walletconnect.com)
+- `PRIVATE_KEY`: Your deployer wallet private key
+
+### 3. Deploy Contract
+
+```bash
+# Compile
+npm run compile
+
+# Deploy to Monad testnet
+npm run deploy
+```
+
+Copy the deployed contract address and add to `.env`:
+```
+VITE_CONTRACT_ADDRESS=0x...
+```
+
+### 4. Run Frontend
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173)
+
+## Usage
+
+1. **Connect Wallet** and add Monad testnet
+2. **Initialize Credits** to receive 100 voting credits
+3. **Submit Project** with metadata (or provide IPFS/Arweave URI)
+4. **Vote** by allocating votes across projects
+5. **View Results** on the leaderboard
+
+## Project Metadata Schema
+
+```json
+{
+  "name": "Project Name",
+  "description": "Short description",
+  "thumbnail": "https://...",
+  "demoLink": "https://...",
+  "videoLink": "https://...",
+  "repoLink": "https://...",
+  "readmeLink": "https://...",
+  "team": {
+    "teamName": "Team Name",
+    "members": ["Alice", "Bob"]
+  }
+}
+```
+
+See `example-metadata.json` for a complete example.
+
+## Project Structure
+
+```
+monad/
+├── contracts/              # Solidity smart contracts
+│   └── QuadraticVoting.sol
+├── scripts/                # Deployment scripts
+│   └── deploy.ts
+├── src/
+│   ├── components/         # React components
+│   ├── config/             # Wagmi & chain config
+│   ├── hooks/              # Contract interaction hooks
+│   ├── pages/              # Page components
+│   ├── utils/              # Utility functions
+│   └── App.tsx
+├── hardhat.config.cjs      # Hardhat configuration
+└── package.json
+```
+
+## Available Scripts
+
+```bash
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run compile      # Compile contracts
+npm run deploy       # Deploy to Monad testnet
+```
+
+## Security Notes
+
+This is an MVP for demonstration. For production:
+
+- Add Sybil resistance (Gitcoin Passport, Proof of Humanity)
+- Implement admin controls and moderation
+- Add metadata validation
+- Get a professional security audit
+
+## License
+
+MIT License - see LICENSE file for details
+
+---
+
+**Built for Monad • Optimized for Parallel Execution**

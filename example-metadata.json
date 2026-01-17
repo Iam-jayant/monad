@@ -1,0 +1,17 @@
+{
+    "name": "Project Name",
+    "description": "A brief description of what this project does and why it's awesome",
+    "thumbnail": "https://example.com/thumbnail.png",
+    "demoLink": "https://demo.example.com",
+    "videoLink": "https://youtube.com/watch?v=dQw4w9WgXcQ",
+    "repoLink": "https://github.com/username/project",
+    "readmeLink": "https://github.com/username/project#readme",
+    "team": {
+        "teamName": "Team Awesome",
+        "members": [
+            "Alice",
+            "Bob",
+            "Charlie"
+        ]
+    }
+}
