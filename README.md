@@ -1,4 +1,4 @@
-# Signal - Quadratic Voting on Monad
+# Signal - Quadratic Voting on Monad - (status incomplete )
 
 A high-throughput Quadratic Voting platform optimized for Monad testnet's parallel execution capabilities.
 
@@ -50,6 +50,8 @@ cp .env.example .env
 Edit `.env` and add:
 - `VITE_WALLETCONNECT_PROJECT_ID`: Get from [WalletConnect Cloud](https://cloud.walletconnect.com)
 - `PRIVATE_KEY`: Your deployer wallet private key
+- `VITE_PINATA_API_KEY`: From Pinata Dashboard
+- `VITE_PINATA_API_SECRET`: From Pinata Dashboard
 
 ### 3. Deploy Contract
 
@@ -78,7 +80,7 @@ Open [http://localhost:5173](http://localhost:5173)
 
 1. **Connect Wallet** and add Monad testnet
 2. **Initialize Credits** to receive 100 voting credits
-3. **Submit Project** with metadata (or provide IPFS/Arweave URI)
+3. **Submit Project** (automatically uploads image/metadata to IPFS via Pinata)
 4. **Vote** by allocating votes across projects
 5. **View Results** on the leaderboard
 

@@ -60,9 +60,9 @@ export interface ProjectMetadata {
     name: string;
     description: string;
     thumbnail?: string;
-    demoLink?: string;
+    siteLink?: string; // Was demoLink, renamed for clarity
     videoLink?: string;
-    repoLink?: string;
+    repoLink?: string; // Mandatory in form, optional here for robust parsing
     readmeLink?: string;
     team?: {
         teamName?: string;

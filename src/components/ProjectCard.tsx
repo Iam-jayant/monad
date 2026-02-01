@@ -1,7 +1,11 @@
+import { useState, useEffect } from 'react';
 import type { ProjectMetadata } from '../utils/quadratic';
+import { fetchProjectMetadata } from '../utils/quadratic';
+import { useProjectMetadata } from '../hooks/useQuadraticVoting';
 import './ProjectCard.css';
 
 interface ProjectCardProps {
+    eventId: number;
     projectId: number;
     metadata: ProjectMetadata | null;
     votePower?: number;
@@ -12,15 +16,48 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({
+    eventId,
     projectId,
-    metadata,
+    metadata: initialMetadata,
     votePower,
     currentVotes = 0,
     onVoteChange,
     showVoteInput = false,
-    isLoading = false,
+    isLoading: parentIsLoading = false,
 }: ProjectCardProps) {
-    if (isLoading || !metadata) {
+    const [metadata, setMetadata] = useState<ProjectMetadata | null>(initialMetadata);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Fetch URI from contract
+    const { metadataURI, isLoading: isUriLoading } = useProjectMetadata(eventId, projectId);
+
+    useEffect(() => {
+        // If metadata provided by parent, use it
+        if (initialMetadata) {
+            setMetadata(initialMetadata);
+            return;
+        }
+
+        // Otherwise fetch if we have URI
+        const loadMetadata = async () => {
+            if (!metadataURI) return;
+            setIsLoading(true);
+            try {
+                const data = await fetchProjectMetadata(metadataURI);
+                if (data) setMetadata(data);
+            } catch (err) {
+                console.error("Error loading project metadata", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadMetadata();
+    }, [metadataURI, initialMetadata]);
+
+    const loading = parentIsLoading || isUriLoading || isLoading;
+
+    if (loading || !metadata) {
         return (
             <div className="project-card loading">
                 <div className="skeleton-image"></div>
@@ -54,8 +91,8 @@ export default function ProjectCard({
                 )}
 
                 <div className="project-links">
-                    {metadata.demoLink && (
-                        <a href={metadata.demoLink} target="_blank" rel="noopener noreferrer" className="project-link">
+                    {metadata.siteLink && (
+                        <a href={metadata.siteLink} target="_blank" rel="noopener noreferrer" className="project-link">
                             🔗 Demo
                         </a>
                     )}

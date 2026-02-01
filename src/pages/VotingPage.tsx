@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { useProjectCount, useVoterInfo, useVote, useInitializeCredits } from '../hooks/useQuadraticVoting';
-import { calculateCost, type ProjectMetadata } from '../utils/quadratic';
+import { useParams, Link } from 'react-router-dom';
+import { useEvent, useVoterInfo, useVote, useInitializeCredits } from '../hooks/useQuadraticVoting';
+import { calculateCost, type ProjectMetadata, fetchProjectMetadata } from '../utils/quadratic';
 import ProjectCard from '../components/ProjectCard';
 import './VotingPage.css';
 
 export default function VotingPage() {
+    const { id } = useParams<{ id: string }>();
+    const eventId = Number(id);
     const { isConnected } = useAccount();
-    const { projectCount } = useProjectCount();
-    const { credits, initialized, refetch: refetchVoterInfo } = useVoterInfo();
+    const { event, isLoading: eventLoading } = useEvent(eventId);
+    const { credits, initialized, refetch: refetchVoterInfo } = useVoterInfo(eventId);
     const { initializeCredits, isPending: isInitializing, isSuccess: initSuccess } = useInitializeCredits();
     const { vote, isPending: isVoting, isSuccess: voteSuccess } = useVote();
 
@@ -19,39 +22,37 @@ export default function VotingPage() {
     // Load projects
     useEffect(() => {
         const loadProjects = async () => {
-            if (projectCount === 0) return;
+            if (!event || event.projectCount === 0) {
+                setProjects([]);
+                return;
+            }
 
             setIsLoadingMetadata(true);
             const projectsData: Array<{ id: number; metadata: ProjectMetadata | null }> = [];
 
-            for (let i = 0; i < projectCount; i++) {
+            // Initialize placeholders
+            for (let i = 1; i <= event.projectCount; i++) {
                 projectsData.push({ id: i, metadata: null });
             }
-
-            setProjects(projectsData);
-
-            // Fetch metadata for each project
-            for (let i = 0; i < projectCount; i++) {
-                try {
-                    await fetch(`${import.meta.env.VITE_CONTRACT_ADDRESS}/metadata/${i}`);
-                    // This is a placeholder - in reality, you'd fetch from the contract
-                    // For now, we'll use a mock
-                    const mockMetadata: ProjectMetadata = {
-                        name: `Project ${i + 1}`,
-                        description: `Description for project ${i + 1}`,
-                    };
-                    projectsData[i].metadata = mockMetadata;
-                } catch (error) {
-                    console.error(`Failed to load metadata for project ${i}:`, error);
-                }
-            }
-
             setProjects([...projectsData]);
+
+            // Fetch metadata
+            // Note: In a real app we would use useProjectMetadata hook efficiently or multicall.
+            // Here we iterate. Optimisation: Use Promise.all
+            // But we need the URI from contract first.
+            // Since we don't have a "getAllProjects" function, we rely on individual fetches or knowing the URIs.
+            // Previous code used a mock or direct fetch. 
+            // We'll update ProjectCard to handle its own metadata fetch or do it here.
+            // Let's rely on ProjectCard fetching metadata via the hook to avoid complex logic here,
+            // OR fetch properly here. Since useProjectMetadata is a hook, we can't call it in loop.
+            // We should assume ProjectCard handles metadata fetching using the hook given itemId.
+            // So we just pass IDs.
+
             setIsLoadingMetadata(false);
         };
 
-        loadProjects();
-    }, [projectCount]);
+        if (event) loadProjects();
+    }, [event?.projectCount, event]);
 
     // Refetch voter info after initialization
     useEffect(() => {
@@ -76,10 +77,9 @@ export default function VotingPage() {
     };
 
     const handleSubmitVotes = () => {
-        // Submit votes for each project
         Object.entries(votes).forEach(([projectId, voteCount]) => {
             if (voteCount > 0) {
-                vote(parseInt(projectId), voteCount);
+                vote(eventId, parseInt(projectId), voteCount);
             }
         });
     };
@@ -88,12 +88,25 @@ export default function VotingPage() {
     const remainingCredits = credits - totalCost;
     const canSubmit = remainingCredits >= 0 && Object.values(votes).some(v => v > 0);
 
+    if (eventLoading) return <div className="voting-page"><p>Loading event...</p></div>;
+    if (!event) return <div className="voting-page"><p>Event not found.</p></div>;
+
+    const navLinks = (
+        <div className="event-nav">
+            <Link to={`/event/${eventId}`} className="active">Vote</Link>
+            <Link to={`/event/${eventId}/submit`}>Submit Project</Link>
+            <Link to={`/event/${eventId}/results`}>Results</Link>
+        </div>
+    );
+
     if (!isConnected) {
         return (
             <div className="voting-page">
+                <h1>{event.name}</h1>
+                {navLinks}
                 <div className="connect-prompt">
                     <h2>Connect Your Wallet</h2>
-                    <p>Please connect your wallet to start voting</p>
+                    <p>Please connect your wallet to participate in {event.name}</p>
                 </div>
             </div>
         );
@@ -102,11 +115,13 @@ export default function VotingPage() {
     if (!initialized) {
         return (
             <div className="voting-page">
+                <h1>{event.name}</h1>
+                {navLinks}
                 <div className="initialize-prompt">
                     <h2>Initialize Your Voting Credits</h2>
-                    <p>You need to initialize your account to receive voting credits</p>
+                    <p>You need to initialize your account to receive voting credits for this event.</p>
                     <button
-                        onClick={initializeCredits}
+                        onClick={() => initializeCredits(eventId)}
                         disabled={isInitializing}
                         className="btn-primary"
                     >
@@ -119,11 +134,16 @@ export default function VotingPage() {
 
     return (
         <div className="voting-page">
+            <div className="event-header">
+                <h1>{event.name}</h1>
+                {navLinks}
+            </div>
+
             <div className="voting-header">
                 <h2>Cast Your Votes</h2>
                 <div className="credits-display">
                     <div className="credits-info">
-                        <span className="credits-label">Available Credits:</span>
+                        <span className="credits-label">Available:</span>
                         <span className="credits-value">{credits}</span>
                     </div>
                     <div className="credits-info">
@@ -142,29 +162,28 @@ export default function VotingPage() {
             </div>
 
             <div className="quadratic-explainer">
-                <h3>How Quadratic Voting Works</h3>
                 <p>
-                    The cost of votes increases quadratically: 1 vote = 1 credit, 2 votes = 4 credits, 3 votes = 9 credits, etc.
-                    This encourages you to spread your votes across multiple projects rather than concentrating on one.
+                    1 vote = 1 credit, 2 votes = 4 credits, 3 votes = 9 credits. Spread your votes!
                 </p>
             </div>
 
-            {projectCount === 0 ? (
+            {event.projectCount === 0 ? (
                 <div className="no-projects">
-                    <p>No projects submitted yet. Be the first to submit a project!</p>
+                    <p>No projects yet. <Link to={`/event/${eventId}/submit`}>Submit one!</Link></p>
                 </div>
             ) : (
                 <>
                     <div className="projects-grid">
-                        {projects.map((project) => (
+                        {Array.from({ length: event.projectCount }, (_, i) => i + 1).map((projectId) => (
                             <ProjectCard
-                                key={project.id}
-                                projectId={project.id}
-                                metadata={project.metadata}
-                                currentVotes={votes[project.id] || 0}
+                                key={projectId}
+                                eventId={eventId}
+                                projectId={projectId}
+                                metadata={null} // ProjectCard will fetch
+                                currentVotes={votes[projectId] || 0}
                                 onVoteChange={handleVoteChange}
                                 showVoteInput={true}
-                                isLoading={isLoadingMetadata}
+                                isLoading={false}
                             />
                         ))}
                     </div>
@@ -179,7 +198,7 @@ export default function VotingPage() {
                         </button>
                         {remainingCredits < 0 && (
                             <p className="error-message">
-                                Insufficient credits! Reduce your votes or remove some allocations.
+                                Insufficient credits!
                             </p>
                         )}
                     </div>

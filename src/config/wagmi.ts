@@ -4,7 +4,7 @@ import { localhost } from 'viem/chains';
 
 // Define Monad testnet chain
 export const monadTestnet = defineChain({
-    id: 41454,
+    id: 10143,
     name: 'Monad Testnet',
     nativeCurrency: {
         decimals: 18,

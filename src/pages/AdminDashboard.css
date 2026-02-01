@@ -1,0 +1,88 @@
+.admin-container {
+    max-width: 600px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.admin-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.admin-card h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.admin-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 1rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: rgba(32, 129, 226, 0.6);
+}
+
+.help-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.success-message {
+    padding: 1rem;
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    border-radius: 8px;
+    color: #4ade80;
+    text-align: center;
+}
+
+.tx-hash {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: monospace;
+}
+
+button[type="submit"] {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+}

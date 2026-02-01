@@ -1,0 +1,508 @@
+[
+    {
+        "inputs": [],
+        "name": "AlreadyInitialized",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "EventNotActive",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InsufficientCredits",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidCode",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidEvent",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidProject",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "Unauthorized",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "eventId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "voter",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "credits",
+                "type": "uint256"
+            }
+        ],
+        "name": "CreditsInitialized",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "eventId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "admin",
+                "type": "address"
+            }
+        ],
+        "name": "EventCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "eventId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "submitter",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "metadataURI",
+                "type": "string"
+            }
+        ],
+        "name": "ProjectSubmitted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "eventId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "voter",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "votes",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "cost",
+                "type": "uint256"
+            }
+        ],
+        "name": "VoteCast",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "INITIAL_CREDITS",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_votes",
+                "type": "uint256"
+            }
+        ],
+        "name": "calculateCost",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_code",
+                "type": "string"
+            }
+        ],
+        "name": "createEvent",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "eventProjectVotePower",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "eventProjects",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "eventId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "submitter",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "metadataURI",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "eventVoterCredits",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "eventVoterInitialized",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "eventVoterProjectVotes",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": ""
+            }
+        ],
+        "name": "events",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "address",
+                "name": "admin",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "codeHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            },
+            {
+                "internalType": "uint256",
+                "name": "projectCount",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_eventId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getProjectMetadata",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_eventId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_voter",
+                "type": "address"
+            }
+        ],
+        "name": "getVoterInfo",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "credits",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "initialized",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_eventId",
+                "type": "uint256"
+            }
+        ],
+        "name": "initializeCredits",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "nextEventId",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_eventId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_metadataURI",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_code",
+                "type": "string"
+            }
+        ],
+        "name": "submitProject",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_eventId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_projectId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_votes",
+                "type": "uint256"
+            }
+        ],
+        "name": "vote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]
